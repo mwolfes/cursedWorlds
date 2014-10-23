@@ -1,0 +1,2 @@
+signals! main-loop ---> winmanager
+					|-> classes
