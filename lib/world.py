@@ -3,7 +3,7 @@ class entity:
         self.y = ypos
         self.x = xpos
     def getShape(self):
-        return [""]
+        return []
 
 class player(entity):
     def __init__(self,ypos,xpos,name):

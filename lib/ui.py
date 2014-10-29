@@ -1,4 +1,5 @@
 import curses
+from lib import world
 
 
 
@@ -9,6 +10,8 @@ class cWinManager:
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
+        #if curses.has_colors():
+            #curses.start_color()
         self.screen.keypad(1)
         self.screen.box()
 
@@ -22,13 +25,17 @@ class cWinManager:
         curses.nocbreak()
         curses.endwin()
 
-    def refreshMap(self,my,mx):
+    def refreshMap(self,my,mx,setting):
         self.screen.erase()
         self.screen.box()
         self.screen.refresh()
+        #redraw the map
         self.map.erase()
         self.map.box() #for testing, remove at the end??? 
-        self.map.addstr(my,mx,"+")
+        #place all objects
+        for entity in setting.entities:
+            if entity.getShape():
+                self.map.addstr(entity.y,entity.x,entity.getShape()[0])
         self.map.refresh(my,mx,1,1,self.maxy - 3,self.maxx-2)
 
     def resizeTerm(self):

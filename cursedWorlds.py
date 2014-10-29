@@ -4,7 +4,6 @@ from lib import world
 import traceback
 import curses
 
-
 cw = cWinManager()
 player = world.player(10,20,"mesiter")
 theSetting = world.setting([player])
@@ -18,18 +17,31 @@ def loop():
             if key==curses.KEY_RESIZE:
                 cw.resizeTerm()
 
-            if key==ord('l'):
+            if key==ord('a'):
                 mx+=2
-                cw.refreshMap(my,mx)
-            if key==ord('h'):
+                cw.refreshMap(my,mx,theSetting)
+            if key==ord('d'):
                 mx+=-2
-                cw.refreshMap(my,mx)
-            if key==ord('k'):
+                cw.refreshMap(my,mx,theSetting)
+            if key==ord('w'):
                 my+=-1
-                cw.refreshMap(my,mx)
+                cw.refreshMap(my,mx,theSetting)
+            if key==ord('s'):
+                my+=1
+                cw.refreshMap(my,mx,theSetting)
+
+            if key==ord('l'):
+                player.x+=2
+                cw.refreshMap(my,mx,theSetting)
+            if key==ord('h'):
+                player.x+=-2
+                cw.refreshMap(my,mx,theSetting)
+            if key==ord('k'):
+                player.y+=-1
+                cw.refreshMap(my,mx,theSetting)
             if key==ord('j'):
-                my+=+1
-                cw.refreshMap(my,mx)
+                player.y+=1
+                cw.refreshMap(my,mx,theSetting)
 
             if key==ord('q'):
                 break
