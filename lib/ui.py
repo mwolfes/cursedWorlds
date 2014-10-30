@@ -3,6 +3,19 @@ from lib import world
 
 
 
+class cWin:
+    def __init__(self, parent, level = 0, posy = 0.0, posx = 0.0 , sizey = 1.0, sizex = 1.0 ):
+        self.parent = parent
+        self.level = level
+        self.posy = posy
+        self.posx = posx
+        self.sizey = sizey
+        self.sizex = sizex
+
+        my, mx = self.parent.getmaxyx()
+
+        self.win = curses.newwin(int(my * sizey),int(mx*sizex),int(my * posy),int(mx * posx))
+        
 class cWinManager:
     def __init__(self):
         self.screen = curses.initscr()
@@ -10,8 +23,8 @@ class cWinManager:
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
-        #if curses.has_colors():
-            #curses.start_color()
+        if curses.has_colors():
+            curses.start_color()
         self.screen.keypad(1)
         self.screen.box()
 
