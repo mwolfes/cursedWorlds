@@ -9,11 +9,10 @@ cw = cWinManager()
 #theSetting = world.setting([player])
 
 def loop():
-    #mx = 0
-    #my = 0
     try:
         while True:
             key = cw.screen.getch()
+
             #if key==curses.KEY_RESIZE:
                 #cw.resizeTerm()
 

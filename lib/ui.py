@@ -1,5 +1,6 @@
 import curses
 from lib import world
+from math import floor
 
 
 
@@ -14,12 +15,15 @@ class cWin:
         self.spacing = 1
 
         my, mx = self.parent.getmaxyx()
-        yy = int(my * posy) + self.spacing
-        xx = int(mx * posx) + self.spacing
-        wy = int(my * sizey) - yy - self.spacing
-        wx = int(mx * sizex) - xx - self.spacing
+        yy = int(floor(my * posy)) + self.spacing
+        xx = int(floor(mx * posx)) + self.spacing
+        wy = int(floor(my * sizey))  - self.spacing
+        wx = int(floor(mx * sizex))  - self.spacing
 
         self.win = curses.newwin(wy,wx,yy,xx)
+
+    def getMaxYX(self):
+        return self.win.getmaxyx()
 
     def refresh(self):
         self.win.noutrefresh()
@@ -42,8 +46,11 @@ class cWinManager:
         self.screen.keypad(1)
         self.screen.box()
 
-        self.Map = cWbox(self.screen,0.0,0.0,0.8,0.8)
-        self.winlist = [self.Map]
+        self.Tools = cWin(self.screen,0.0,0.0,0.8,0.1)
+        self.Map = cWbox(self.screen,0.0,0.1,0.8,0.7)
+        self.Legend = cWin(self.screen,0.0,0.8,0.8,0.19)
+        self.Main = cWbox(self.screen,0.8,0.0,0.2,0.99)
+        self.winlist = [self.Map,self.Tools,self.Legend,self.Main]
 
 #       self.map = curses.newpad(75,75)
 #       self.map.box()
