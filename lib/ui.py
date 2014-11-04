@@ -8,19 +8,23 @@ class cWin:
     def __init__(self, parent, posy = 0.0, posx = 0.0 , sizey = 1.0, sizex = 1.0, level = 0 ):
         self.parent = parent
         self.level = level
-        self.posy = posy
-        self.posx = posx
-        self.sizey = sizey
-        self.sizex = sizex
-        self.spacing = 1
+        self._posy = posy
+        self._posx = posx
+        self._sizey = sizey
+        self._sizex = sizex
+        self.spacing = 0
+        yy, xx , wy , wx = self.getWinDimensions()
+        self.win = parent.subwin(wy,wx,yy,xx)
 
+    def getWinDimensions(self):
         my, mx = self.parent.getmaxyx()
-        yy = int(floor(my * posy)) + self.spacing
-        xx = int(floor(mx * posx)) + self.spacing
-        wy = int(floor(my * sizey))  - self.spacing
-        wx = int(floor(mx * sizex))  - self.spacing
-
-        self.win = curses.newwin(wy,wx,yy,xx)
+        yy = int(floor(my * self._posy)) + self.spacing
+        xx = int(floor(mx * self._posx)) + self.spacing
+        wy = int(floor(my * self._sizey))  - self.spacing
+        wy -= wy % 2
+        wx = int(floor(mx * self._sizex))  - self.spacing
+        wx -= wx % 2
+        return ( yy, xx , wy , wx )
 
     def getMaxYX(self):
         return self.win.getmaxyx()
@@ -35,25 +39,38 @@ class cWbox(cWin):
 
         
 class cWinManager:
+
+    def _init_wins(self):
+        self.Tools = cWbox(self.screen,0.0,0.0,0.7,0.1)
+        self.Map = cWbox(self.screen,0.0,0.1,0.7,0.7)
+        self.Legend = cWbox(self.screen,0.0,0.8,0.7,0.2)
+        self.Main = cWbox(self.screen,0.7,0.0,0.3,1)
+        self.winlist = [self.Map,self.Tools,self.Legend,self.Main]
+
     def __init__(self):
         self.screen = curses.initscr()
         self.maxy,self.maxx = self.screen.getmaxyx()
+        self.maxx -= self.maxx % 2
+        self.maxy -= self.maxy % 2
+        curses.resizeterm(self.maxy,self.maxx)
+
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
-        #if curses.has_colors():
-            #curses.start_color()
+        if curses.has_colors():
+            curses.start_color()
         self.screen.keypad(1)
-        self.screen.box()
+        curses.mousemask(1)
 
-        self.Tools = cWin(self.screen,0.0,0.0,0.8,0.1)
-        self.Map = cWbox(self.screen,0.0,0.1,0.8,0.7)
-        self.Legend = cWin(self.screen,0.0,0.8,0.8,0.19)
-        self.Main = cWbox(self.screen,0.8,0.0,0.2,0.99)
-        self.winlist = [self.Map,self.Tools,self.Legend,self.Main]
+        self._init_wins()
+        self.refresh()
 
-#       self.map = curses.newpad(75,75)
-#       self.map.box()
+
+
+    def resize(self):
+        self.screen.erase()
+        self._init_wins()
+        self.refresh()
 
     def refresh(self):
         self.screen.noutrefresh()
@@ -67,6 +84,12 @@ class cWinManager:
         curses.echo()
         curses.nocbreak()
         curses.endwin()
+
+    def getWindow(self, y , x):
+        for entry in self.winlist:
+            if entry.win.enclose(y,x):
+                return entry
+        return 0
 
 #   def refreshMap(self,my,mx,setting):
 #       self.screen.erase()
